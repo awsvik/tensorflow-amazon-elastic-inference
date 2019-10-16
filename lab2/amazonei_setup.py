@@ -222,7 +222,11 @@ class EC2:
 
     def launch_instance(self,image_id,instance_type,key_name,security_group,subnet_id,instance_profile, accelerator_type):
 
-        launch_response = self._ec2_Client.run_instances(ImageId=image_id,
+        launch_response = self._ec2_Client.run_instances(
+                                       BlockDeviceMappings=[{
+                                           'DeviceName': '/dev/sdh',
+                                           'Ebs': {'VolumeSize': 200}}],
+                                       ImageId=image_id,
                                        InstanceType =instance_type,
                                        KeyName=key_name,
                                        MaxCount=1,
