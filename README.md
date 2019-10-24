@@ -3,7 +3,7 @@ Introduction
 ------------------------------------
 [Amazon Elastic Inference](https://aws.amazon.com/machine-learning/elastic-inference/) allows you to attach low-cost GPU-powered acceleration to [Amazon EC2](http://aws.amazon.com/ec2), [Amazon SageMaker](https://aws.amazon.com/documentation/sagemaker/) and [Amazon ECS](https://aws.amazon.com/ecs/) instances, and reduce the cost of running deep learning inference by up to [75 percent](https://aws.amazon.com/blogs/aws/amazon-elastic-inference-gpu-powered-deep-learning-inference-acceleration/). The `EIPredictor`API makes it easy to use Elastic Inference.
 
-In this workshop, we use the `EIPredictor` and describe a step-by-step example for using TensorFlow with Elastic Inference. We will demostrate how to attach Amzzon Elastic Inference to [Amazon EC2](http://aws.amazon.com/ec2) and Amazon SageMaker](https://aws.amazon.com/documentation/sagemaker/). Additionally, we explore the cost and performance benefits of using Elastic Inference with TensorFlow. We walk you through how we improved total inference time for FasterRCNN-ResNet50 over 40 video frames from ~113.699 seconds to ~8.883 seconds, and how we improved cost efficiency by 78.5 percent.
+In this workshop, we use the `EIPredictor` and describe a step-by-step example for using TensorFlow with Elastic Inference. We will demostrate how to attach Amzzon Elastic Inference to [Amazon EC2](http://aws.amazon.com/ec2) and [Amazon SageMaker](https://aws.amazon.com/documentation/sagemaker/). Additionally, in Lab1, we explore the cost and performance benefits of using Elastic Inference with TensorFlow. In Lab2, We walk you through how we improved total inference time for FasterRCNN-ResNet50 over 40 video frames from ~113.699 seconds to ~8.883 seconds, and how we improved cost efficiency by 78.5 percent.
 
 The `EIPredictor` is based on the [TensorFlow Predictor](https://github.com/tensorflow/tensorflow/tree/r1.13/tensorflow/contrib/predictor) API. The `EIPredictor` is designed to be consistent with the TensorFlow Predictor API to make code portable between the two data structures. The `EIPredictor` is meant to be an easy way to use Elastic Inference within a single Python script or notebook. A flow that’s already using the TensorFlow Predictor only needs one code change: importing and specifying the`EIPredictor`. This procedure is shown later.
 
@@ -52,46 +52,26 @@ If necessary, you can change the notebook instance settings, including the ML co
     
 2.  Choose **Notebook instances**, then choose **Create notebook instance**.
     
-3.  On the **Create notebook instance** page, provide the following information (if a field is not mentioned, leave the default values):
+3.  On the **Create notebook instance** page, provide the following information (if a field is not mentioned below, leave it default):
     
     1.  For **Notebook instance name**, type a name for your notebook instance.
         
     2.  For **Instance type**, choose `ml.t2.medium`. This is the least expensive instance type that notebook instances support, and it suffices for this exercise.
         
-    3.  For **IAM role**, choose **Create a new role**, then choose **Create role**.
-        
-    4.  Choose **Create notebook instance**.
-        
-        In a few minutes, Amazon SageMaker launches an ML compute instance—in this case, a notebook instance—and attaches an ML storage volume to it. The notebook instance has a preconfigured Jupyter notebook server and a set of Anaconda libraries.
-        
-
-Next Step
-___
-
-### Step 2: Open Terminal Window on Amazon SageMaker Jupyter Notebook Instance
-
-
-1.  Open the notebook instance.
+    3.  For **IAM role**, choose **Create a new role**, then choose **Create role**. In 'create IAM Role' pop up window, select 'Any S3 bucket'. Make note of IAM role created. We will assign more permissions to it later when we start Lab 2.
     
-    1.  Sign in to the Amazon SageMaker console at [https://console.aws.amazon.com/sagemaker/](https://console.aws.amazon.com/sagemaker/).
+    4. For Git repositories, select 'clone public git repo ***' and provide folowing repository: ``https://github.com/awsvik/tensorflow-amazon-elastic-inference.git``
         
-    2.  Open the notebook instance, by choosing either **Open Jupyter** for classic Juypter view or **Open JupyterLab** for JupyterLab view next to the name of the notebook instance. The Jupyter notebook server page appears:
-        
-2.  Open Terminal Window.
-    
-    1.  If you opened the notebook in Jupyter classic view, on the **Files** tab, choose **New**, and **Terminal** at the bottom of the menu. 
-    2. In ther terminal console execute ``sh-4.2$cd SageMaker/``
+    5.  Choose **Create notebook instance**. In a few minutes, Amazon SageMaker launches an ML compute instance—in this case, a notebook instance—and attaches an ML storage volume to it. The notebook instance has a preconfigured Jupyter notebook server and a set of Anaconda libraries.
+
+    6. In the SageMaker Jupyter Notebook Instance console, in the Files tab, navigate to ``tensorflow-amazon-elastic-inference\lab1\tensorflow_serving_container.ipynb``
+   
+    7. Click on ``tensorflow_serving_container.ipynb`` and follow the instruction in Jupyter Notebook to complete Lab 1. 
 
     
-Next Step
-___
-### Step 3: Download Ipython Notebook from Git Repo.
+    8. In Lab 1, you will create a model tar.gz archive and deploy it on Amazon SageMaker with Amazon Elastic Inference attached and without Amazon Elastic Inference attached. You wil note differenc between latency and cost and compare results to assess best value options for your inference needs. After completing Lab 1, we continue to use the same Jupyter Notebook Instance to get started on Lab 2. 
 
-
-1.  In the terminal console execute In ther terminal console execute ``sh-4.2$ git clone <git repo>``
-2. Swtich to the **Home** tab in your browser window. 
-3. In the SageMaker Jupyter Notebook Instance console, in the Files tab, navigate to ``tensorflow-amazon-elastic-inference\lab1\TFWorld-Amazon-Elastic-Inference-Lab1.ipynb``
-4. Click on ``TFWorld-Amazon-Elastic-Inference-Lab1.ipynb`` and follow the instruction in Jupyter Notebook to complete Lab 1. After completing Lab 1, come back, we will use this same Jupyter Notebook Instance to get started on Lab 2. In Lab 1, you will train a model and deploy it on Amazon SageMaker with Amazon Elastic Inference Attached and without Amazon Elastic Inference Attached. Note the latency and cost difference in with and wihtout Amazon Elastic Inference option. Don't focus too much on undertanding training. Breeze through the training part quickly. 
+    
 
 ## Lab 2: Attach Amazon Elastic Inference to Amazon EC2
 
@@ -101,44 +81,63 @@ ___
 
 Here is a step-by-step example of using Elastic Inference with the `EIPredictor`. For this example, we use a FasterRCNN-ResNet50 model, an m5.large CPU instance, and an eia.large accelerator.
 
-### Create Key Pair for Remote Ec2 Instance with DL AMI
-1. Switch to the Amazon SageMaker terminal console in your browser tab where you ran ``sh-4.2$ git clone https://github.com/awsvik/tensorflow-amazon-elastic-inference.git``
-2. In ther terminal console execute ``sh-4.2$ source activate python3``. Python 3 is required to run the script that is avaliable in lab 2 folder of git repo.
-3. Create your key pair using the Amazon EC2 console
+Next Step
+---
+### Launch Terminal Window in SageMaker Jupyter Notebook
 
-4.  Open the Amazon EC2 console at [https://console.aws.amazon.com/ec2/](https://console.aws.amazon.com/ec2/).
+1. In the SageMaker Jupyter Notebook Home, on the right hand side, click **new**. In the pulldown menu scroll down, you will see **terminal** option. Launch a new terminal.
+
+2. Run following commands in the terminal notebook.
+``sh-4.2$cd Sagemaker\tensorflow-amazon-elastic-inference\lab2\``
+``sh-4.2$source activate python3``
+
+Python 3 is required to run the script that is avaliable in lab 2 folder to launch Amazon EC2 instance with Elastic Inference attached.
+
+### Create Key Pair to SSH into Remote Ec2 Instance(running DL AMI) that will serve the Jupyter Notebook
+
+1. Create your key pair using the Amazon EC2 console
+
+2.  Open the Amazon EC2 console at [https://console.aws.amazon.com/ec2/](https://console.aws.amazon.com/ec2/).
     
-5.  In the navigation pane, under **NETWORK & SECURITY**, choose **Key Pairs**.
+3.  In the navigation pane, under **NETWORK & SECURITY**, choose **Key Pairs**.
     
     Note:
     The navigation pane is on the left side of the Amazon EC2 console. If you do not see the pane, it might be minimized; choose the arrow to expand the pane.
     
-6.  Choose **Create Key Pair**.
+4.  Choose **Create Key Pair**.
     
-7.  For **Key pair name**, enter a name for the new key pair, and then choose **Create**.
+5.  For **Key pair name**, enter a name for the new key pair, and then choose **Create**.
     
-8.  The private key file is automatically downloaded by your browser. The base file name is the name you specified as the name of your key pair, and the file name extension is `.pem`. Save the private key file in a safe place. This is the only chance for you to save the private key file. You'll need to provide the name of your key pair when you launch an instance and the corresponding private key each time you connect to the instance.
-    
-9.  If you will use an SSH client on a Mac or Linux computer to connect to your Linux instance, use the following command to set the permissions of your private key file so that only you can read it.
+6.  The private key file is automatically downloaded by your browser. The base file name is the name you specified as the name of your key pair, and the file name extension is `.pem`. Save the private key file in a safe place. This is the only chance for you to save the private key file. You'll need to provide the name of your key pair when you launch an instance and the corresponding private key each time you connect to the instance.    
+7.  If you will use an SSH client on a Mac or Linux computer to connect to your Linux instance, use the following command to set the permissions of your private key file so that only you can read it.
     
     ``chmod 400 `my-key-pair`.pem``
     
     If you do not set these permissions, then you cannot connect to 	your instance using this key pair. For more information, see 	[Error: Unprotected Private Key File]	(TroubleshootingInstancesConnecting.html#troubleshoot-unprotected-	key).
+    **Note:** You will use this key later to do SSH port forwarding from your personal laptop into remote EC2 to access Jupyter Notebook locally on laptop and you will upload it to Amazon Sagemaker to SSH to remote Amazon EC2 to run docker build and run to create Jupyter Notebook.
+
     
-	### Use EI setup tool to launch Amazon Ec2 instance with DL AMI and Amazon EI attached
+ ### Upload Key-pair.pem to lab2 folder SageMaker Jupyter Notebook
 
-10. We use the Amazon Elastic Inference (EI) setup tool which is a Python script that enables you to quickly get started with EI. 
+1. In the SageMaker Jupyter Notebook Home, in the Files tab, navigate to ``tensorflow-amazon-elastic-inference\lab2\``
+2. On the right hand side, click **upload** and browse to key-pair.pem file and complete upload.
+        
+### Run EI setup tool to launch Amazon Ec2 instance with DL AMI and Amazon EI attached
 
-	**change working directory to lab2**
-``$cd /home/ec2-user/SageMaker/tensorflow-amazon-elastic-inference/lab2``
-**run the script**
+1. We use the Amazon Elastic Inference (EI) setup tool which is a Python script in lab2 folder that enables you to quickly get started with EI. 
+
+2. In the browser, navigate to AWS **IAM** service console. In the left hand side, click Roles. In the roles search, "AmazonSageMaker-ExecutionRole". Click, the role that you created in Lab 1. Attach existing "AdministratorAccess" managed policy. You can search policy with name "AdministratorAccess" and attach it to the role. This operation allows Amazon SageMaker to execute any command running in SageMaker Notebook terminal to create/read AWS resources such as Amazon EC2, IAM roles etc. in your AWS account. 
+
+3. Navigate back to SageMaker Notebook Terminal to continue.
+
+**run the script** - change region name in below command to your current AWS region(example, us-west-2, us-east-1, us-east-2 etc.)
 ``$python amazonei_setup.py --region <AWS-Region-Name> --instance-type m5.xlarge``
 
 	The script will ask you to choose following
 
-    a. Choose Operating System 
-    b. Choose Accelerator size
-    c. Choose VPC
+    a. Choose Operating System (select Amazon Linux) 
+    b. Choose Accelerator size(select eia.xlarge)
+    c. Choose VPC(any VPC in your account with public subnet)
     d. Launch an instance.   
     
   At a high level, the script does the following:
@@ -155,48 +154,41 @@ Here is a step-by-step example of using Elastic Inference with the `EIPredictor`
 	**Note**: Please wait until instance is fully initialized and ready to accept SSH connections. You may check instance status at EC2 console.Also please locate your private key file <key-pair>.pem
 
 	``Type 'y' to continue. Type 'q' to quit.``
-``amazon-elastic-inference-tools $``
+``amazon-elastic-inference-tools $ y``
 
-	Type 'q' to quit if your ec2 instance is running in Amazon EC2 console.
+Type 'q' to quit EI wizard after you see **Launched instance successfully.** in your terminal console.
 
-11. Locate your keypair.pem on your personal laptop. Navigate to the SageMaker Jupyter Notebook Instance console in your browser, in Jupyter Notebook Files tab, navigate to ``SageMaker\tensorflow-amazon-elastic-inference\lab2``. Look for ``upload`` button on the Jupyter Notebook(LHS). Use this button to upload your keypair.pem file from your personal laptop.
+``amazonei-wizard>q``
 
-12. In your browser tab, navigate to SageMaker Jupyter Notebook Terminal window and SSH into the EC2 instance that was created by Amazon Elastic Inference (EI) setup tool.
-Changer permissions on my-key-pair.pem
+2. In SageMaker Jupyter Notebook Terminal window SSH into the EC2 instance that was created by Amazon Elastic Inference (EI) setup tool.
+Change permissions on my-key-pair.pem before you run SSH command.
 
 	``chmod 400 `my-key-pair`.pem``
 
-	For Ubuntu:
-	``ssh -i {keypair.pem} ubuntu@{ec2 instance public DNS name}``
-
-	 For Amazon Linux:
+	For Amazon Linux:
 	``ssh -i {keypair.pem} ec2-user@{ec2 instance public DNS name}``
 
-13.  In the remote EC2 instance(DL AMI with EI attached), copy the code.
+3.  Now, you are SSH into remote EC2 instance(DL AMI with EI attached), clone the below repo. It has code to create a docker conatiner for Jupyter Notebook.
 ``git clone https://github.com/aws-samples/aws-elastic-inference-tensorflow-examples``
     
-14.  Build and run your Jupyter notebook on remote instance.
+4.  Build and run your Jupyter notebook on remote instance.
     
  ``cd aws-elastic-inference-tensorflow-examples; 
  ./build_run_ei_container.sh``
     
     Wait until the Jupyter notebook starts up. 
     
-15. Inorder to access the Jupyter Notebook running on remote EC2 	instance, SSH into remote Ec2 instance from the terminal or SSH 	client on your personal laptop with port forwarding for the Jupyter 	notebook.
+5. Inorder to access the Jupyter Notebook running on remote EC2 	instance, SSH into remote EC2 instance using SSH client on your personal  laptop with port forwarding for the Jupyter notebook.
 
- 	For Ubuntu AMIs:
-    
-        ``ssh -i {/path/to/keypair} -L 8888:localhost:8888 ubuntu@{ec2 	instance public DNS name}``
-    
-   For Amazon Linux AMIs:
+ `  For Amazon Linux AMIs:
     
         ``ssh -i {/path/to/keypair} -L 8888:localhost:8888 ec2-	user@{ec2 instance public DNS name}``
  
-16. Go to localhost:8888 and supply the token that is given in the terminal. In the terminal you will see a ``http://localhost:8888/<token>`` url with token. 
+6. Go to http://localhost:8888/<token> and supply the token that is given in the terminal. In the terminal you will see a ``http://localhost:8888/<token>`` url with token. This opens up a Jupyter Notebook in your browser. You can also use the clickable link in the SageMaker instance terminal window to open Juypter Notebook in your laptop browser.
 
 	### Access your Jupyter Notebook from your personal laptop broswer window
 
-17.  Run benchmarked versions of Object Detection examples.
+1.  Run benchmarked versions of Object Detection examples.
     1.  Open `elastic_inference_video_object_detection_tutorial.ipynb` and run the notebook.
     2.  Take note of the session runtimes produced. The following two examples show without Elastic Inference, then with Elastic Inference.
         1.  The first is TensorFlow running your model on your instance’s CPU, without Elastic Inference:
@@ -213,7 +205,7 @@ Changer permissions on my-key-pair.pem
                 Average inference time (seconds): 0.23773444891
                 Total inference time (seconds): 9.50937795639
             
-    3.  Compare the results, performance, and cost between the two runs.
+    3.  Compare the results, performance, and cost between the two runs. Results can vary because of network latency.
         *   In the screenshots posted above, Elastic Inference gives an average inference speedup of ~12x.
         *   With this video of 340 frames of shape (1, 1080, 1920, 3) simulating streaming frames, about 44 of these full videos can be inferred in one hour using the m5.large+eia.large, considering one loading of the model.
         *   With the same environment excluding the eia.large Elastic Inference accelerator, only three or four of these videos can be inferred in one hour. Thus, it would take 12–15 hours to complete the same task.
@@ -231,9 +223,13 @@ Changer permissions on my-key-pair.pem
                                           "detection_boxes":"detection_boxes:0",
                                           "num_detections":"num_detections:0"},
                             use_ei=True)
+                            
+### Clean up
+1. In the SageMaker Conole, go to Notebook Instances, select the Notebook Instance that you used in workshop. In the **actions**, perform following. Stop, wait for Instance to be stopped, and then Terminate.
+2. In the Amazon EC2 console, go to instances, select your running Instance, select Terminate Action.
             
         
-### Exploring all possibilities
+### Additional Infromation - Exploring all possibilities
 
 Now, we’ve done more investigation and tried out a few more instance combinations for Elastic Inference. We experimented with FasterRCNN-ResNet50, batch size of 1, and input image dimensions of (1080, 1920, 3).
 
