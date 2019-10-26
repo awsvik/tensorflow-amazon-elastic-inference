@@ -238,18 +238,18 @@ The model is loaded into memory with an initial inference using a random input o
 -|A|B|C|D|E|
 |---|---|---|---|---|---|
 |1|Client instance type|Elastic Inference accelerator type|Cost per hour|Infer latency [ms]|Cost per 100k inferences|
-|2|m5.large|eia.medium|$0.23|<span style="color:red"></style>353.53|$2.22|
+|2|m5.large|eia.medium|$0.23|<span style="color:red">353.53</span>|$2.22|
 |3||eia.large|$0.36|222.78|$2.20|
-|4||eia.xlarge|$0.62|<span style="color:blue"></style>140.96|$2.41|
-|5|m5.xlarge|eia.medium|$0.32|<span style="color:red"></style>357.70|$3.20|
+|4||eia.xlarge|$0.62|<span style="color:blue">140.96</span>|$2.41|
+|5|m5.xlarge|eia.medium|$0.32|<span style="color:red">357.70</span>|$3.20|
 |6||eia.large|$0.45|224.81|$2.82|
-|7||eia.xlarge|$0.71|<span style="color:blue"></style>150.29|$2.97|
-|8|m5.2xlarge|eia.medium|$0.51|<span style="color:red"></style>350.38|$5.00|
+|7||eia.xlarge|$0.71|<span style="color:blue">150.29</span>|$2.97|
+|8|m5.2xlarge|eia.medium|$0.51|<span style="color:red">350.38</span>|$5.00|
 |9||eia.large|$0.64|229.65|$4.11|
-|10||eia.xlarge|$0.90|<span style="color:blue"></style>142.55|$3.58|
-|11|m5.4xlarge|eia.medium|$0.90|<span style="color:red"></style>355.53|$8.87|
+|10||eia.xlarge|$0.90|<span style="color:blue">142.55</span>|$3.58|
+|11|m5.4xlarge|eia.medium|$0.90|<span style="color:red">355.5</span>3|$8.87|
 |12||eia.large|$1.03|222.53|6.35|
-|13||eia.xlarge|$1.29|<span style="color:blue"></style>149.17|$5.34|
+|13||eia.xlarge|$1.29|<span style="color:blue">149.17</span>|$5.34|
 
 
 
