@@ -180,9 +180,9 @@ Change permissions on my-key-pair.pem before you run SSH command.
     
 5. Inorder to access the Jupyter Notebook running on remote EC2 	instance, SSH into remote EC2 instance using SSH client on your personal  laptop with port forwarding for the Jupyter notebook.
 
- `  For Amazon Linux AMIs:
+ For Amazon Linux AMIs:
     
-        ``ssh -i {/path/to/keypair} -L 8888:localhost:8888 ec2-	user@{ec2 instance public DNS name}``
+        ``ssh -i {/path/to/keypair} -L 8888:localhost:8888 ec2-user@{ec2 instance public DNS name}``
  
 6. Go to http://localhost:8888/<token> and supply the token that is given in the terminal. In the terminal you will see a ``http://localhost:8888/<token>`` url with token. This opens up a Jupyter Notebook in your browser. You can also use the clickable link in the SageMaker instance terminal window to open Juypter Notebook in your laptop browser.
 
