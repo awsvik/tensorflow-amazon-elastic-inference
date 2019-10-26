@@ -238,7 +238,7 @@ The model is loaded into memory with an initial inference using a random input o
 -|A|B|C|D|E|
 |---|---|---|---|---|---|
 |1|Client instance type|Elastic Inference accelerator type|Cost per hour|Infer latency [ms]|Cost per 100k inferences|
-|2|m5.large|eia.medium|$0.23|<span style="color:red"></span>353.53|$2.22|
+|2|m5.large|eia.medium|$0.23|```diff - 353.53```|$2.22|
 |3||eia.large|$0.36|222.78|$2.20|
 |4||eia.xlarge|$0.62|<span style="color:blue">140.96</span>|$2.41|
 |5|m5.xlarge|eia.medium|$0.32|<span style="color:red">357.70</span>|$3.20|
